@@ -2,7 +2,7 @@
    "name": "Codeinstitute template",
    "dockerComposeFile": "docker-compose.yml",
    "service": "app",
-   "workspaceFolder": "/workspace/walkthrough2",
+   "workspaceFolder": "/workspaces/walkthrough2",
  
    "customizations": {
      "vscode": {
