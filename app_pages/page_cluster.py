@@ -82,7 +82,7 @@ def page_cluster_body():
 # code coped from "07 - Modeling and Evaluation - Cluster Sklearn" notebook - under "Cluster Analysis" section
 def cluster_distribution_per_variable(df, target):
 
-    df_bar_plot = df.value_counts(["Clusters", target]).reset_index()
+    df_bar_plot = df.groupby(['Clusters', target]).size().reset_index(name='Count')
     df_bar_plot.columns = ['Clusters', target, 'Count']
     df_bar_plot[target] = df_bar_plot[target].astype('object')
 
@@ -95,13 +95,14 @@ def cluster_distribution_per_variable(df, target):
     st.plotly_chart(fig)
 
     df_relative = (df
-                   .groupby(["Clusters", target])
-                   .size()
-                   .groupby(level=0)
-                   .apply(lambda x:  100*x / x.sum())
-                   .reset_index()
-                   .sort_values(by=['Clusters'])
-                   )
+            .groupby(["Clusters", target])
+            .size()
+            .unstack(fill_value=0)
+            .apply(lambda x: 100 * x / x.sum(), axis=1)
+            .stack()
+            .reset_index(name='Relative Percentage (%)')
+            .sort_values(by=['Clusters', target])
+            )
     df_relative.columns = ['Clusters', target, 'Relative Percentage (%)']
 
     st.write(f"#### Relative Percentage (%) of {target} in each cluster")
